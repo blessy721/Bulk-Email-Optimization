@@ -1,0 +1,46 @@
+import streamlit as st
+import smtplib, ssl
+import csv
+
+# Getting User Emails
+filename = &quot;members.csv&quot;
+rows = []
+with open(filename, &#39;r&#39;) as csvfile:
+csvreader = csv.reader(csvfile)
+for row in csvreader:
+rows.append(row)
+
+bot_email = &quot;team14@gmail.com&quot;
+password = &quot;miniproject14&quot;
+port = 587
+smtp_server = &quot;smtp.gmail.com&quot;
+
+# Website content
+st.title(&quot;BULK EMAIL OPTIMIZER&quot;)
+st.subheader(&quot;Mail Context&quot;)
+st.empty()
+mail_subject = st.text_input(&quot;Subject : &quot;)
+mail_message = st.text_area(&quot;Message : &quot;)
+main_email_sender = st.button(&quot;Send Mail&quot;)
+
+mail_content = &quot;&quot;&quot;\
+Subject: {0}
+{1}
+
+&quot;&quot;&quot;.format(mail_subject, mail_message)
+
+# Sending mail
+def sendEmail():
+context = ssl.create_default_context()
+with smtplib.SMTP(smtp_server, port) as email:
+email.starttls(context = context)
+email.login(bot_email, password)
+for row in rows:
+for col in row:
+reciever_name, reciever_email = col.split()
+email.sendmail(bot_email, reciever_email, mail_content)
+
+# if mail sent successfully
+if main_email_sender:
+sendEmail()
+st.success(&quot;Mail sent successfully&quot;)
